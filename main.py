@@ -13,16 +13,30 @@ import os
 monitor_thread = None
 def on_message(ws, message):
     print(message)
-    message_type= json.loads(message)['type']
+    json_message = json.loads(message)
+    message_type= json_message['type']
     if message_type == 'command':
-        command = json.loads(message)['data']['command']
+        command = json_message['command']
         if command == 'hdmi_cec_off':
             print("Turning off HDMI CEC")
             os.system("echo 'standby 0' | cec-client -s -d 1")
         elif command == 'hdmi_cec_on':
             print("Turning on HDMI CEC")
             os.system("echo 'on 0' | cec-client -s -d 1")
+        elif command == 'reboot':
+            print("Rebooting")
+            os.system("sudo reboot")
+        elif command == 'exit':
+            print("Exiting")
+            ws.close()
+            exit(0)
+        elif command == 'relaunch_kiosk_browser':
+            print("Relaunching kiosk browser")
             
+        else:
+            print("Unknown command")
+    else:
+        print("Unknown message type")
     pass
 
 def on_error(ws, error):
