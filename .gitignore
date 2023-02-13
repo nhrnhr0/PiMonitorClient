@@ -1,0 +1,6 @@
+env
+.env
+device_id.txt
+
+__pycache__
+*.pyc
