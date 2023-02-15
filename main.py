@@ -53,8 +53,9 @@ def on_error(ws, error):
 
 
 def on_close(ws, close_status_code, close_msg):
-    print("### closed ###")
-    monitor_thread.join()
+    print("### closed ###", close_status_code, close_msg)
+    # global monitor_thread
+    # monitor_thread.join()
     exit(1)
 
 
@@ -79,16 +80,20 @@ def monitor(ws):
         # img_str = img_str.decode('utf-8')
 
         os.system('export DISPLAY=:0 && export XAUTHORITY=/home/pi/.Xauthority && scrot /home/pi/Desktop/PiMonitorClient/img.png')
-        with open('/home/pi/Desktop/PiMonitorClient/img.png', 'rb') as image_file:
-            img_str = base64.b64encode(image_file.read())
-            img_str = img_str.decode('utf-8')
-        # img_str = ''
+        try:
+            with open('/home/pi/Desktop/PiMonitorClient/img.png', 'rb') as image_file:
+                img_str = base64.b64encode(image_file.read())
+                img_str = img_str.decode('utf-8')
+        except:
+            img_str = ''
         
         get_hdmi_status = os.popen('echo "pow 0" | cec-client -s -d 1').read()
         if 'power status: on' in get_hdmi_status:
             hdmi_status = 'on'
-        else:
+        elif 'power status: off' in get_hdmi_status:
             hdmi_status = 'off'
+        else:
+            hdmi_status = 'unknown'
         device_id = get_device_id()
         ws.send(json.dumps({"type": "status","device":device_id, "data": {"status": "connected", "time": time.time(),
                                                        'img': img_str, 'hdmi_status': hdmi_status
@@ -102,10 +107,11 @@ if __name__ == "__main__":
     # os.environ[''] = 
     print('starting')
     os.system("echo 'on 0' | cec-client -s -d 1")
-    relaunch_kiosk_browser()
-    get_device_id()
+    # relaunch_kiosk_browser()
+    device_id = get_device_id()
     websocket.enableTrace(False)
     server_url = os.getenv('WS_SERVER_URL')
+    server_url = server_url  + device_id
     print('connecting to ', server_url)
     ws = websocket.WebSocketApp(server_url,
                                 on_open=on_open,
