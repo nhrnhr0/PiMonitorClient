@@ -49,6 +49,7 @@ def relaunch_kiosk_browser():
 
 def on_error(ws, error):
     print(error)
+    time.sleep(5)
     exit(1)
 
 
@@ -56,6 +57,7 @@ def on_close(ws, close_status_code, close_msg):
     print("### closed ###", close_status_code, close_msg)
     # global monitor_thread
     # monitor_thread.join()
+    time.sleep(5)
     exit(1)
 
 
