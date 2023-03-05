@@ -104,7 +104,13 @@ def monitor(ws):
                                                        }}))
         time.sleep(30)
 
-
+def is_kiosk_running():
+    # check if chromium is running
+    get_chromium_status = os.popen('ps -A | grep chromium').read()
+    if 'chromium' in get_chromium_status:
+        return True
+    else:
+        return False
 
 if __name__ == "__main__":
     
@@ -128,6 +134,8 @@ if __name__ == "__main__":
 
     # Set dispatcher to automatic reconnection, 5 second reconnect delay if connection closed unexpectedly
     # relaunch_kiosk_browser()
+    if not is_kiosk_running():
+        relaunch_kiosk_browser()
     ws.run_forever(dispatcher=rel, reconnect=5)
     # print("Starting rel dispatcher")
     rel.signal(2, rel.abort)  # Keyboard Interrupt
