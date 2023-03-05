@@ -110,7 +110,10 @@ if __name__ == "__main__":
     
     # os.environ[''] = 
     print('starting')
+    # turn the hdmi cec on
     os.system("echo 'on 0' | cec-client -s -d 1")
+    # set the hdmi (rasberry PI) cec to be active source
+    os.system('echo "as" | cec-client RPI -s -d 1')
     # relaunch_kiosk_browser()
     device_id = get_device_id()
     websocket.enableTrace(False)
@@ -124,6 +127,7 @@ if __name__ == "__main__":
                                 on_close=on_close)
 
     # Set dispatcher to automatic reconnection, 5 second reconnect delay if connection closed unexpectedly
+    relaunch_kiosk_browser()
     ws.run_forever(dispatcher=rel, reconnect=5)
     # print("Starting rel dispatcher")
     rel.signal(2, rel.abort)  # Keyboard Interrupt
