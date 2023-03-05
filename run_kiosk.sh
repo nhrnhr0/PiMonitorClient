@@ -21,7 +21,7 @@ sed -i 's/"exit_type":"Crashed"/"exit_type":"Normal"/' /home/pi/.config/chromium
 
 
 # Launch the browser in full screen Kiosk mode 
-sudo -u pi /usr/bin/chromium-browser --noerrdialogs --disable-infobars  --kiosk https://gold-tv.boost-pop.com/tv-display/1 &
+sudo -u pi /usr/bin/chromium-browser --noerrdialogs --disable-infobars  --kiosk https://kehilaton.boost-pop.com/tv-display/1/?key=Erx0R4dz92w982glfu46 &
 
 
 echo "waiting for the process to start"
