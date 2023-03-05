@@ -94,6 +94,8 @@ def monitor(ws):
             hdmi_status = 'on'
         elif 'power status: off' in get_hdmi_status:
             hdmi_status = 'off'
+        elif 'power status: standby' in get_hdmi_status:
+            hdmi_status = 'standby'
         else:
             hdmi_status = 'unknown'
         device_id = get_device_id()
