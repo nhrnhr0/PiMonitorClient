@@ -127,7 +127,7 @@ if __name__ == "__main__":
                                 on_close=on_close)
 
     # Set dispatcher to automatic reconnection, 5 second reconnect delay if connection closed unexpectedly
-    relaunch_kiosk_browser()
+    # relaunch_kiosk_browser()
     ws.run_forever(dispatcher=rel, reconnect=5)
     # print("Starting rel dispatcher")
     rel.signal(2, rel.abort)  # Keyboard Interrupt
