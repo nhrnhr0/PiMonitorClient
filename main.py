@@ -113,7 +113,7 @@ def monitor(ws):
         else:
             hdmi_status = 'unknown - ' + str(get_hdmi_status)
         send_fetch_to_django(img_str,device_id, t,hdmi_status)
-        ws.send(json.dumps({"type": "status","device":device_id, "data": {"status": "connected", "time": t, 'hdmi_status': hdmi_status
+        ws.send(json.dumps({"type": "status","device":device_id, "data": {"status": "connected", "time": t, 'hdmi_status': hdmi_status, 'img_str': img_str
                                                        }}))
         time.sleep(30)
 
