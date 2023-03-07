@@ -1,4 +1,4 @@
-
+import requests
 from dotenv import load_dotenv
 import os
 load_dotenv()
@@ -31,21 +31,25 @@ def on_message(ws, message):
         elif command == 'reboot':
             print("Rebooting")
             os.system("sudo reboot")
-        elif command == 'exit':
-            print("Exiting")
-            exit(0)
         elif command == 'relaunch_kiosk_browser':
             print("Relaunching kiosk browser")
             # run `run_kiosk.sh`
             relaunch_kiosk_browser()
-            
+        elif command =='set_tv_url':
+            print("Setting TV URL")
+            url = json_message['url']
+            # create url.txt file and write the url to it
+            with open('./url.txt', 'w') as f:
+                f.write(url)
+            # relaunch the kiosk browser
+            relaunch_kiosk_browser()
         else:
             print("Unknown command")
     else:
         print("Unknown message type")
     pass
 def relaunch_kiosk_browser():
-    os.system("export DISPLAY=:0.0 && export XAUTHORITY=/home/pi/.Xauthority && /bin/bash /home/pi/Desktop/PiMonitorClient/run_kiosk.sh &")
+    os.system("export DISPLAY=:0.0 && export XAUTHORITY=/home/pi/.Xauthority && /bin/bash ./run_kiosk.sh &")
 
 def on_error(ws, error):
     print(error)
@@ -69,6 +73,13 @@ def on_open(ws):
         monitor_thread.join()
     monitor_thread = _thread.start_new_thread(monitor, (ws,))
 
+def send_fetch_to_django(img_str, device_id, t,hdmi_status):
+    # send the image to the django server via http
+    url = os.getenv('DJANGO_SERVER_URL') + 'pi_screenshot/' + device_id + '/'
+    data = {'image': img_str, 'time': t, 'hdmi_status': hdmi_status}
+    r = requests.post(url, data=data)
+    print(r.status_code, r.reason)
+
 
 def monitor(ws):
     print("Starting monitor")
@@ -88,6 +99,9 @@ def monitor(ws):
                 img_str = img_str.decode('utf-8')
         except:
             img_str = ''
+        t = time.time()
+        device_id = get_device_id()
+        
         
         get_hdmi_status = os.popen('echo "pow 0" | cec-client -s -d 1').read()
         if 'power status: on' in get_hdmi_status:
@@ -97,10 +111,9 @@ def monitor(ws):
         elif 'power status: standby' in get_hdmi_status:
             hdmi_status = 'standby'
         else:
-            hdmi_status = 'unknown'
-        device_id = get_device_id()
-        ws.send(json.dumps({"type": "status","device":device_id, "data": {"status": "connected", "time": time.time(),
-                                                       'img': img_str, 'hdmi_status': hdmi_status
+            hdmi_status = 'unknown - ' + str(get_hdmi_status)
+        send_fetch_to_django(img_str,device_id, t,hdmi_status)
+        ws.send(json.dumps({"type": "status","device":device_id, "data": {"status": "connected", "time": t, 'hdmi_status': hdmi_status
                                                        }}))
         time.sleep(30)
 
