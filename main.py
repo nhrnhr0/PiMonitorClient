@@ -92,7 +92,7 @@ def monitor(ws):
         # img_str = base64.b64encode(buffered.getvalue())
         # img_str = img_str.decode('utf-8')
 
-        os.system('export DISPLAY=:0 && export XAUTHORITY=/home/pi/.Xauthority && scrot /home/pi/Desktop/PiMonitorClient/img.png')
+        os.system('export DISPLAY=:0 && export XAUTHORITY=/home/pi/.Xauthority && sudo scrot /home/pi/Desktop/PiMonitorClient/img.png')
         try:
             with open('/home/pi/Desktop/PiMonitorClient/img.png', 'rb') as image_file:
                 img_str = base64.b64encode(image_file.read())
