@@ -102,7 +102,7 @@ def monitor(ws):
         t = time.time()
         device_id = get_device_id()
         
-        
+        print('img_str', img_str)
         get_hdmi_status = os.popen('echo "pow 0" | cec-client -s -d 1').read()
         if 'power status: on' in get_hdmi_status:
             hdmi_status = 'on'
