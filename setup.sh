@@ -9,6 +9,7 @@ echo 'WS_SERVER_URL=wss://pi-monitor.boost-pop.com/ws/socket-server/' >> .env
 sudo apt update -y && sudo apt install supervisor -y
 sudo apt install unclutter -y
 sudo mkdir /var/log/gunicorn
+sudo apt install cec-utils
 sudo cp ./pi_monitor.conf /etc/supervisor/conf.d/
 sudo supervisorctl reread
 sudo supervisorctl update
