@@ -84,7 +84,7 @@ def send_fetch_to_django(img_str, device_id, t,hdmi_status):
 def monitor(ws):
     print("Starting monitor")
     while True:
-        
+        print("Sending status")
         # myScreenshot = pyautogui.screenshot()
         # # encodeed = myScreenshot.tobytes()
         # buffered = BytesIO()
@@ -95,6 +95,7 @@ def monitor(ws):
         if os.path.exists(image_location):
             os.remove(image_location)
         os.system('export DISPLAY=:0 && export XAUTHORITY=/home/pi/.Xauthority && sudo scrot -q 5 ' + image_location)
+        img_str = ''
         try:
             with open(image_location, 'rb') as image_file:
                 img_str = base64.b64encode(image_file.read())
@@ -102,8 +103,6 @@ def monitor(ws):
         except:
             img_str = ''
         t = time.time()
-        if os.path.exists(image_location):
-            os.remove(image_location)
         device_id = get_device_id()
         
         get_hdmi_status = os.popen('echo "pow 0" | cec-client -s -d 1').read()
@@ -118,6 +117,7 @@ def monitor(ws):
         send_fetch_to_django(img_str,device_id, t,hdmi_status)
         ws.send(json.dumps({"type": "status","device":device_id, "data": {"status": "connected", "time": t, 'hdmi_status': hdmi_status, 'img_str': img_str
                                                        }}))
+        print("Sent status")
         time.sleep(30)
 
 def is_kiosk_running():
