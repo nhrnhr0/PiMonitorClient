@@ -84,8 +84,7 @@ def send_fetch_to_django(img_str, device_id, t,hdmi_status):
 def monitor(ws):
     print("Starting monitor")
     while True:
-        if os.path.exists(image_location):
-            os.remove(image_location)
+        
         # myScreenshot = pyautogui.screenshot()
         # # encodeed = myScreenshot.tobytes()
         # buffered = BytesIO()
@@ -93,6 +92,8 @@ def monitor(ws):
         # img_str = base64.b64encode(buffered.getvalue())
         # img_str = img_str.decode('utf-8')
         image_location = '/home/pi/Desktop/PiMonitorClient/img.png'
+        if os.path.exists(image_location):
+            os.remove(image_location)
         os.system('export DISPLAY=:0 && export XAUTHORITY=/home/pi/.Xauthority && sudo scrot -q 5 ' + image_location)
         try:
             with open(image_location, 'rb') as image_file:
