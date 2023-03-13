@@ -84,22 +84,25 @@ def send_fetch_to_django(img_str, device_id, t,hdmi_status):
 def monitor(ws):
     print("Starting monitor")
     while True:
-        
+        if os.path.exists(image_location):
+            os.remove(image_location)
         # myScreenshot = pyautogui.screenshot()
         # # encodeed = myScreenshot.tobytes()
         # buffered = BytesIO()
         # myScreenshot.save(buffered, format="JPEG")
         # img_str = base64.b64encode(buffered.getvalue())
         # img_str = img_str.decode('utf-8')
-
-        os.system('export DISPLAY=:0 && export XAUTHORITY=/home/pi/.Xauthority && sudo scrot -q 5 /home/pi/Desktop/PiMonitorClient/img.png')
+        image_location = '/home/pi/Desktop/PiMonitorClient/img.png'
+        os.system('export DISPLAY=:0 && export XAUTHORITY=/home/pi/.Xauthority && sudo scrot -q 5 ' + image_location)
         try:
-            with open('/home/pi/Desktop/PiMonitorClient/img.png', 'rb') as image_file:
+            with open(image_location, 'rb') as image_file:
                 img_str = base64.b64encode(image_file.read())
                 img_str = img_str.decode('utf-8')
         except:
             img_str = ''
         t = time.time()
+        if os.path.exists(image_location):
+            os.remove(image_location)
         device_id = get_device_id()
         
         get_hdmi_status = os.popen('echo "pow 0" | cec-client -s -d 1').read()
