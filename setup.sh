@@ -2,8 +2,7 @@
 python3 -m venv env
 source ./env/bin/activate
 pip install -r requirements.txt
-echo 'WS_SERVER_URL=wss://pi-monitor.boost-pop.com/ws/socket-server/' >> .env
-
+sudo cp prod.env .env
 
 # supervisor
 sudo apt update -y && sudo apt install supervisor -y
