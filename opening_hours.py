@@ -41,7 +41,7 @@ def is_open():
     current_weekday = (datetime.datetime.today().weekday() + 2)%7
     current_time = datetime.datetime.now().time()
     print('current_weekday' + str(current_weekday))
-    print('current_time' + str(current_time)
+    print('current_time' + str(current_time))
     for opening_hours in current_opening_hours['opening_hours']:
         if opening_hours['weekday'] == current_weekday:
             from_hour = datetime.datetime.strptime(opening_hours['from_hour'], '%H:%M:%S').time()
