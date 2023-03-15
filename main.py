@@ -1,6 +1,9 @@
 import requests
 from dotenv import load_dotenv
 import os
+
+from opening_hours import OPENING_HOURS_FILE_PATH, check_and_update_tv_status, set_opening_hours
+from os_commands import get_current_hdmi_status, is_kiosk_running, set_hdmi_active_source, take_screenshot, turn_on_hdmi_cec
 load_dotenv()
 os.environ.setdefault('DISPLAY', ':0.0')
 import websocket
@@ -45,6 +48,17 @@ def on_message(ws, message):
             relaunch_kiosk_browser()
         else:
             print("Unknown command")
+    elif message_type == 'opening_hours':
+        print("Opening hours message")
+        opening_hours = json_message['opening_hours']
+        manual_turn_off = json_message['manual_turn_off']
+        data = {'opening_hours': opening_hours, 'manual_turn_off': manual_turn_off}
+        set_opening_hours(data)
+        # write the opening hours to the opening_hours.txt file
+        
+            
+        
+        
     else:
         print("Unknown message type")
     pass
@@ -85,57 +99,29 @@ def monitor(ws):
     print("Starting monitor")
     while True:
         print("Sending status")
-        # myScreenshot = pyautogui.screenshot()
-        # # encodeed = myScreenshot.tobytes()
-        # buffered = BytesIO()
-        # myScreenshot.save(buffered, format="JPEG")
-        # img_str = base64.b64encode(buffered.getvalue())
-        # img_str = img_str.decode('utf-8')
-        image_location = '/home/pi/Desktop/PiMonitorClient/img.png'
-        if os.path.exists(image_location):
-            os.remove(image_location)
-        os.system('export DISPLAY=:0 && export XAUTHORITY=/home/pi/.Xauthority && sudo scrot -q 5 ' + image_location)
-        img_str = ''
-        try:
-            with open(image_location, 'rb') as image_file:
-                img_str = base64.b64encode(image_file.read())
-                img_str = img_str.decode('utf-8')
-        except:
-            img_str = ''
+        
         t = time.time()
         device_id = get_device_id()
         
-        get_hdmi_status = os.popen('echo "pow 0" | cec-client -s -d 1').read()
-        if 'power status: on' in get_hdmi_status:
-            hdmi_status = 'on'
-        elif 'power status: off' in get_hdmi_status:
-            hdmi_status = 'off'
-        elif 'power status: standby' in get_hdmi_status:
-            hdmi_status = 'standby'
-        else:
-            hdmi_status = 'unknown - ' + str(get_hdmi_status)
+        hdmi_status = get_current_hdmi_status()
+        img_str = take_screenshot()
         send_fetch_to_django(img_str,device_id, t,hdmi_status)
         ws.send(json.dumps({"type": "status","device":device_id, "data": {"status": "connected", "time": t, 'hdmi_status': hdmi_status,
                                                        }}))
         print("Sent status")
+        check_and_update_tv_status(hdmi_status)
         time.sleep(30)
 
-def is_kiosk_running():
-    # check if chromium is running
-    get_chromium_status = os.popen('ps -A | grep chromium').read()
-    if 'chromium' in get_chromium_status:
-        return True
-    else:
-        return False
 
 if __name__ == "__main__":
     
     # os.environ[''] = 
     print('starting')
     # turn the hdmi cec on
-    os.system("echo 'on 0' | cec-client -s -d 1")
+    turn_on_hdmi_cec()
+    
     # set the hdmi (rasberry PI) cec to be active source
-    os.system('echo "as" | cec-client RPI -s -d 1')
+    set_hdmi_active_source()
     # relaunch_kiosk_browser()
     device_id = get_device_id()
     websocket.enableTrace(False)
