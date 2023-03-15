@@ -42,11 +42,14 @@ def is_open():
     current_time = datetime.datetime.now().time()
     print('current_weekday' + str(current_weekday))
     print('current_time' + str(current_time))
+    MARGIN_TIME = datetime.timedelta(minutes=5)
     for opening_hours in current_opening_hours['opening_hours']:
         if opening_hours['weekday'] == current_weekday:
             from_hour = datetime.datetime.strptime(opening_hours['from_hour'], '%H:%M:%S').time()
             to_hour = datetime.datetime.strptime(opening_hours['to_hour'], '%H:%M:%S').time()
-            if from_hour <= current_time and current_time <= to_hour:
+            # if from_hour <= current_time and current_time <= to_hour:
+            #     return True
+            if from_hour - MARGIN_TIME <= current_time and current_time <= to_hour + MARGIN_TIME:
                 return True
     return False
 # try to read the opening hours from the opening_hours.txt file
