@@ -34,12 +34,14 @@ def check_and_update_tv_status(current_hdmi_status):
 
 def is_open():
     if current_opening_hours is None:
-        return False
+        return True 
     # {"opening_hours": [{"weekday": 1, "from_hour": "07:00:00", "to_hour": "19:00:00"}, {"weekday": 2, "from_hour": "07:00:00", "to_hour": "19:00:00"}, {"weekday": 3, "from_hour": "07:00:00", "to_hour": "19:00:00"}, {"weekday": 4, "from_hour": "07:00:00", "to_hour": "20:00:00"}, {"weekday": 5, "from_hour": "07:00:00", "to_hour": "20:01:00"}], "manual_turn_off": false}
     if current_opening_hours['manual_turn_off']:
         return False
-    current_weekday = datetime.datetime.today().weekday()
+    current_weekday = (datetime.datetime.today().weekday() + 2)%7
     current_time = datetime.datetime.now().time()
+    print('current_weekday' + str(current_weekday))
+    print('current_time' + str(current_time)
     for opening_hours in current_opening_hours['opening_hours']:
         if opening_hours['weekday'] == current_weekday:
             from_hour = datetime.datetime.strptime(opening_hours['from_hour'], '%H:%M:%S').time()
