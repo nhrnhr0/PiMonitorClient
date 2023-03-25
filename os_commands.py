@@ -1,6 +1,8 @@
 import os
 import base64
 
+BASE_PATH = os.getenv('BASE_PATH')
+
 def get_current_hdmi_status():
     get_hdmi_status = os.popen('echo "pow 0" | cec-client -s -d 1').read()
     if 'power status: on' in get_hdmi_status:
@@ -30,6 +32,24 @@ def is_kiosk_running():
         return True
     else:
         return False
+
+def deploy_code():
+    # run `deploy.sh`
+    
+    os.system('bash ' + BASE_PATH + '/deploy.sh')
+    pass
+def refresh_page():
+    # send F5 key to chromium
+    os.system('xdotool key F5')
+    pass
+def run_script(script):
+    # run the script
+    os.system(script)
+    pass
+def update_software():
+    # run sudo apt-get update && sudo apt-get upgrade -y
+    os.system('sudo apt-get update && sudo apt-get upgrade -y')
+    pass
 
 def take_screenshot():
     image_location = '/home/pi/Desktop/PiMonitorClient/img.png'
