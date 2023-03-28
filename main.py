@@ -46,6 +46,13 @@ def on_message(ws, message):
                 f.write(url)
             # relaunch the kiosk browser
             relaunch_kiosk_browser()
+        elif command == 'refresh_page':
+            refresh_page()
+        elif command == 'deploy':
+            deploy()
+        elif command == 'system_update':
+            system_update()
+        # refresh_page, deploy, system_update
         else:
             print("Unknown command")
     elif message_type == 'opening_hours':

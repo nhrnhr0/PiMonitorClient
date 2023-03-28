@@ -2,7 +2,17 @@ import os
 import base64
 
 BASE_PATH = os.getenv('BASE_PATH')
-
+def refresh_page():
+    # send F5 key to chromium
+    os.system('xdotool key F5')
+    pass
+def deploy():
+    # run `deploy.sh`
+    os.system('bash ' + BASE_PATH + '/deploy.sh')
+    pass
+def system_update():
+    os.system('sudo apt-get update && sudo apt-get upgrade -y')
+    pass
 def get_current_hdmi_status():
     get_hdmi_status = os.popen('echo "pow 0" | cec-client -s -d 1').read()
     if 'power status: on' in get_hdmi_status:
