@@ -46,6 +46,13 @@ def on_message(ws, message):
                 f.write(url)
             # relaunch the kiosk browser
             relaunch_kiosk_browser()
+        elif command == 'refresh_page':
+            refresh_page()
+        elif command == 'deploy':
+            deploy()
+        elif command == 'system_update':
+            system_update()
+        # refresh_page, deploy, system_update
         else:
             print("Unknown command")
     elif message_type == 'opening_hours':
@@ -87,12 +94,24 @@ def on_open(ws):
         monitor_thread.join()
     monitor_thread = _thread.start_new_thread(monitor, (ws,))
 
+django_request_session = None
+
+
 def send_fetch_to_django(img_str, device_id, t,hdmi_status):
     # send the image to the django server via http
+    global django_request_session
     url = os.getenv('DJANGO_SERVER_URL') + 'pi_screenshot/' + device_id + '/'
     data = {'image': img_str, 'time': t, 'hdmi_status': hdmi_status}
-    r = requests.post(url, data=data)
-    print(r.status_code, r.reason)
+    if django_request_session is None:
+        django_request_session = requests.Session()
+    try:
+        r = django_request_session.post(url, data=data)
+        print(r.status_code, r.reason)
+    except Exception as e:
+        print(e)
+        print("Failed to send fetch to django")
+        django_request_session = None
+        pass
 
 
 def monitor(ws):
@@ -118,7 +137,7 @@ if __name__ == "__main__":
     # os.environ[''] = 
     print('starting')
     # turn the hdmi cec on
-    turn_on_hdmi_cec()
+    # turn_on_hdmi_cec()
     
     # set the hdmi (rasberry PI) cec to be active source
     set_hdmi_active_source()
