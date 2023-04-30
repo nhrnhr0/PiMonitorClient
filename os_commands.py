@@ -1,5 +1,6 @@
 import os
 import base64
+import subprocess
 
 BASE_PATH = os.getenv('BASE_PATH')
 def refresh_page():
@@ -62,15 +63,14 @@ def update_software():
     pass
 
 def take_screenshot():
-    image_location = '/home/pi/Desktop/PiMonitorClient/img.png'
-    if os.path.exists(image_location):
-        os.remove(image_location)
-    os.system('export DISPLAY=:0 && export XAUTHORITY=/home/pi/.Xauthority && sudo scrot -q 5 ' + image_location)
-    img_str = ''
+    env = {'DISPLAY': ':0', 'XAUTHORITY': '/home/pi/.Xauthority'}
     try:
-        with open(image_location, 'rb') as image_file:
-            img_str = base64.b64encode(image_file.read())
-            img_str = img_str.decode('utf-8')
-    except:
-        img_str = ''
+        screenshot = subprocess.check_output(['sudo', 'scrot', '-q', '5', '-'], env=env)
+        img_str = screenshot.decode('utf-8')
+    except subprocess.CalledProcessError as e:
+        print('Error:', e)
+        img_str = ""
+    except Exception as e:
+        print('Unexpected error:', e)
+        img_str = ""
     return img_str
