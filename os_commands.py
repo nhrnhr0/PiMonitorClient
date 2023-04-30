@@ -65,7 +65,7 @@ def update_software():
 def take_screenshot():
     env = {'DISPLAY': ':0', 'XAUTHORITY': '/home/pi/.Xauthority'}
     try:
-        screenshot = subprocess.check_output(['sudo', 'scrot', '-q', '5', '-e', 'echo $f'], env=env)
+        screenshot = subprocess.check_output(['sudo', 'scrot', '-q', '5', '-'], env=env)
         img_str = screenshot.decode('utf-8')
     except subprocess.CalledProcessError as e:
         print('Error:', e)
