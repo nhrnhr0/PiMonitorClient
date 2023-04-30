@@ -67,8 +67,10 @@ def take_screenshot():
     try:
         screenshot = subprocess.check_output(['sudo', 'scrot', '-q', '5', '-e', 'echo $f'], env=env)
         img_str = screenshot.decode('utf-8')
-        return img_str
     except subprocess.CalledProcessError as e:
         print('Error:', e)
+        img_str = ""
     except Exception as e:
         print('Unexpected error:', e)
+        img_str = ""
+    return img_str
