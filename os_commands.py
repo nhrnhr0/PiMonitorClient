@@ -64,13 +64,14 @@ def update_software():
 
 def take_screenshot():
     env = {'DISPLAY': ':0', 'XAUTHORITY': '/home/pi/.Xauthority'}
+    img_str = ''
     try:
-        screenshot = subprocess.check_output(['sudo', 'scrot', '-q', '5', '-'], env=env)
-        img_str = screenshot.decode('utf-8')
+        screenshot = subprocess.check_output(['scrot', '-q', '5', '-e', 'cat $f'], env=env)
+        img_str = base64.b64encode(screenshot).decode('utf-8')
     except subprocess.CalledProcessError as e:
         print('Error:', e)
-        img_str = ""
+        img_str = ''
     except Exception as e:
         print('Unexpected error:', e)
-        img_str = ""
+        img_str = ''
     return img_str
